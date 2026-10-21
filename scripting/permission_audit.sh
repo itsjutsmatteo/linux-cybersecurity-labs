@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Find world-writable paths up to two levels below a target directory.
-# Run with: bash scripting/permission_audit.sh [directory]
-# This script only reports paths; it does not change permissions.
+# Usage: bash scripting/permission_audit.sh [directory]
+# Read-only: reports findings without modifying permissions.
 
 set -u
 
@@ -17,11 +17,13 @@ printf 'Checking world-writable paths (maximum depth: 2)...\n\n'
 
 # -perm -0002 matches paths whose "others" write bit is set.
 # Permission findings require context; not every result is a vulnerability.
-find "$target" -maxdepth 2 -perm -0002 -print 2>/dev/null
-
-status=$?
-if [[ $status -ne 0 ]]; then
-  printf 'Note: some paths may not have been readable.\n'
+# Keep find's error messages visible so incomplete scans are not hidden.
+if find "$target" -maxdepth 2 -perm -0002 -print; then
+  printf '\nAudit completed successfully.\n'
+  printf 'No permissions were modified.\n'
+else
+  status=$?
+  printf '\nWarning: audit incomplete; find exited with status %s.\n' "$status" >&2
+  printf 'Some paths may not have been accessible. Review the errors above.\n' >&2
+  exit 2
 fi
-
-printf '\nAudit finished. No permissions were modified.\n'
