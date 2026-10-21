@@ -8,8 +8,8 @@ A place for small scripts and notes as I learn Bash and Python.
 - [ ] Exit codes and conditional statements
 - [ ] Loops and command-line arguments
 - [ ] Functions and reusable code
-- [ ] Input validation and error handling
-- [ ] Basic Python scripting
+- [x] Input validation and error handling
+- [x] Basic Python scripting
 
 ## Starter scripts
 
@@ -30,13 +30,22 @@ bash scripting/permission_audit.sh .
 bash scripting/permission_audit.sh /tmp
 ```
 
+If the target is not a directory, the script exits with code 1. If `find` cannot complete the scan, it reports the problem and exits with code 2.
+
 ### 3. Log keyword analyzer (Python)
 
-Counts selected words in a local log file without printing its contents.
+Counts selected keyword-matching lines in a local log file without printing its contents. It also reports how many lines were scanned.
 
 ```bash
 python3 scripting/log_keyword_analyzer.py /path/to/logfile
 ```
+
+The summary contains approximate matches for `error`, `warning`, `failed`, and `denied`. A line is counted at most once per category, even if a matching term appears multiple times on that line. These counts are not proof of an attack.
+
+Exit codes:
+- `0`: analysis completed.
+- `1`: the file is missing or could not be read.
+- `2`: incorrect number of command-line arguments.
 
 Use a log file you are allowed to inspect. Some logs require elevated privileges to read; don't publish sensitive log data.
 
