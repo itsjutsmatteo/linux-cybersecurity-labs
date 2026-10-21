@@ -30,10 +30,12 @@ def main() -> int:
         return 1
 
     counts = {category: 0 for category in KEYWORDS}
+    lines_scanned = 0
 
     try:
         with log_path.open("r", encoding="utf-8", errors="replace") as log_file:
             for line in log_file:
+                lines_scanned += 1
                 lowered = line.lower()
                 for category, terms in KEYWORDS.items():
                     if any(term in lowered for term in terms):
@@ -43,6 +45,7 @@ def main() -> int:
         return 1
 
     print(f"Keyword summary for: {log_path.name}")
+    print(f"Lines scanned: {lines_scanned}")
     for category, count in counts.items():
         print(f"{category:>8}: {count}")
 
